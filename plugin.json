@@ -1,0 +1,16 @@
+{
+  "name": "copilot-cocapn",
+  "description": "Cocapn fleet integration for GitHub Copilot CLI — pilot 200+ sovereign AI vessels from your terminal",
+  "version": "1.0.0",
+  "author": {
+    "name": "Superinstance & Lucineer (DiGennaro et al.)",
+    "email": "casey@cocapn.ai",
+    "url": "https://github.com/Lucineer/cocapn-ai"
+  },
+  "license": "MIT",
+  "keywords": ["cocapn", "fleet", "sovereign", "ai-agents", "cloudflare-workers", "byok", "zero-deps"],
+  "agents": "agents/",
+  "skills": ["skills/"],
+  "repository": "https://github.com/Lucineer/copilot-cocapn",
+  "homepage": "https://github.com/Lucineer/copilot-cocapn#readme"
+}
