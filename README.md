@@ -1,183 +1,51 @@
-# copilot-cocapn
+# Copilot Cocapn
 
-> Pilot 200+ sovereign AI vessels from GitHub Copilot CLI — the Cocapn fleet in your terminal.
+> GitHub Copilot CLI plugin for Cocapn. Custom agents, fleet skills, BYOK model routing.
 
-A [GitHub Copilot CLI plugin](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-cli-plugins) that brings the full Cocapn fleet to your terminal. Deploy vessels, check fleet health, design architectures, and coordinate multi-vessel operations — all through natural language.
+Bring the Cocapn fleet into your terminal via GitHub Copilot CLI.
 
-## What is Cocapn?
+## Features
 
-Cocapn is an open-source agent runtime and fleet protocol powering 200+ sovereign AI vessels on Cloudflare Workers. Zero npm dependencies. Fork-first. BYOK. Git-native memory.
-
-**Each vessel is a self-contained Cloudflare Worker** — no frameworks, no lock-in, no supply chain attack surface.
+- 2 custom agents: Cocapn Architect (system design) and Fleet Pilot (deployment)
+- 4 skills: cocapn-init, fleet-create, fleet-deploy, fleet-status
+- BYOK model routing — per-agent model selection via YAML frontmatter
 
 ## Install
 
 ```bash
-copilot plugin install https://github.com/Lucineer/copilot-cocapn
+copilot plugin install Lucineer/copilot-cocapn
 ```
 
-Or install locally for development:
+## Agents
 
-```bash
-git clone https://github.com/Lucineer/copilot-cocapn.git
-copilot plugin install ./copilot-cocapn
-```
+**Cocapn Architect** — Designs agent systems, suggests vessel compositions, generates cocapn.yaml configs.
 
-## What You Get
+**Fleet Pilot** — Manages fleet operations: deploy vessels, check health, coordinate multi-vessel tasks.
 
-### Custom Agents
+## Skills
 
-| Agent | Purpose | Trigger |
-|-------|---------|---------|
-| **fleet-pilot** | Deploy, manage, and coordinate fleet vessels | "fleet", "cocapn", "vessel" |
-| **cocapn-architect** | Design vessel architectures and fleet protocols | "architecture", "design-vessel", "protocol" |
+- `cocapn-init` — Initialize a new Cocapn project in current directory
+- `fleet-create` — Generate a new vessel from a template
+- `fleet-deploy` — Deploy vessels to Cloudflare Workers
+- `fleet-status` — Check health of all fleet vessels
 
-### Skills
+## BYOK Model Config
 
-| Skill | Description |
-|-------|-------------|
-| **fleet-deploy** | Deploy a vessel to Cloudflare + GitHub |
-| **fleet-status** | Check fleet health across all vessels |
-| **fleet-create** | Generate a vessel from a description |
-| **cocapn-init** | Bootstrap a new Cocapn-compatible project |
-
-## Usage Examples
-
-### Deploy a new vessel
-
-```
-copilot
-> Use @fleet-pilot to create a vessel called "my-monitor" that tracks fleet health with a dashboard. Use accent color #0ea5e9.
-```
-
-### Check fleet status
-
-```
-copilot
-> Use @fleet-pilot to run a health check on all 200 fleet vessels and report any failures.
-```
-
-### Design a new vessel architecture
-
-```
-copilot
-> Use @cocapn-architect to design a vessel for real-time collaboration between agents. What protocols does it need?
-```
-
-### Parallel fleet operations with /fleet
-
-```
-copilot
-> /fleet Create vessels for: fleet-email-notifier (purple), fleet-sms-alert (red), fleet-webhook-manager (blue). Deploy all three and verify health.
-```
-
-### Programmatic use
-
-```bash
-copilot --agent fleet-pilot -p "Create a vessel called quick-test with a simple health check dashboard. Deploy it."
-```
-
-## Fleet Architecture
-
-```
-┌─────────────────────────────────────────────────┐
-│                  THE FLEET (200+)                │
-│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐          │
-│  │Vessel│ │Vessel│ │Vessel│ │ ...  │ × 200+    │
-│  └──┬───┘ └──┬───┘ └──┬───┘ └──┬───┘          │
-│     │        │        │        │                │
-│  ┌──┴────────┴────────┴────────┴──┐            │
-│  │        A2A Protocol            │            │
-│  └──────────────┬─────────────────┘            │
-│  ┌──────────────┴─────────────────┐            │
-│  │     vessel.json Protocol       │            │
-│  └──────────────┬─────────────────┘            │
-│  ┌──────────────┴─────────────────┐            │
-│  │    Git + KV Memory Layer       │            │
-│  └────────────────────────────────┘            │
-└─────────────────────────────────────────────────┘
-```
-
-## BYOK (Bring Your Own Keys)
-
-The fleet uses CF Secrets Store for all API keys. Your keys never touch our code.
-
-```bash
-# Configure your BYOK provider
-wrangler secret put DEEPSEEK_API_KEY    # DeepSeek
-wrangler secret put OPENAI_API_KEY      # OpenAI
-wrangler secret put ZAI_API_KEY          # z.ai (GLM)
-```
-
-### Using BYOK Models with Copilot CLI
-
-Copilot CLI supports custom models per agent. Set the `model` field in the agent's `.agent.md` frontmatter:
+Set per-agent models in YAML frontmatter:
 
 ```yaml
 ---
-name: fleet-pilot
-model: deepseek-chat    # Use DeepSeek for this agent
+name: my-agent
+model: deepseek-chat
 ---
 ```
 
-You can also specify models inline in prompts:
+## Ecosystem
 
-```
-> Use @fleet-pilot to create a vessel. Use deepseek-reasoner for the architecture design.
-```
-
-For parallel fleet operations with `/fleet`, specify different models per subtask:
-
-```
-> /fleet Create a new vessel called email-notifier. 
-> Use deepseek-chat for the worker.ts generation.
-> Use deepseek-reasoner for the architecture review.
-```
-
-## Fork-First
-
-Every vessel is forkable and self-hostable. No platform lock-in.
-
-```bash
-# Fork any vessel
-gh repo fork Lucineer/vessel-name
-
-# Deploy to your own Cloudflare account
-cd vessel-name
-# Update account_id in wrangler.toml
-npx wrangler deploy
-```
-
-## Plugin Structure
-
-```
-copilot-cocapn/
-├── plugin.json                    # Plugin manifest
-├── agents/
-│   ├── fleet-pilot.agent.md       # Fleet operations agent
-│   └── cocapn-architect.agent.md  # Architecture design agent
-├── skills/
-│   ├── fleet-deploy/SKILL.md      # Deploy vessel skill
-│   ├── fleet-status/SKILL.md      # Health check skill
-│   ├── fleet-create/SKILL.md      # Generate vessel skill
-│   └── cocapn-init/SKILL.md       # Project bootstrap skill
-└── README.md
-```
-
-## Compatibility
-
-- **GitHub Copilot CLI** v1.0+
-- **Cloudflare Workers** (free tier supported)
-- **Node.js** 18+
-- **GitHub CLI** (`gh`) for repo management
-- **Wrangler CLI** for Cloudflare deployment
+- [Deckboss](https://github.com/Lucineer/deckboss) — Build-phase AI assistant
+- [Cocapn](https://github.com/Lucineer/cocapn-ai) — Agent runtime
+- [The Fleet](https://github.com/Lucineer/the-fleet) — 200+ vessels
 
 ## License
 
-MIT
-
----
-
-<i>Built by [Superinstance](https://github.com/superinstance) & [Lucineer](https://github.com/Lucineer) (DiGennaro et al.)</i>
-
-<i>Powered by [Cocapn](https://github.com/Lucineer/cocapn-ai) — The sovereign agent runtime</i>
+MIT — Built by [Superinstance](https://github.com/superinstance) and [Lucineer](https://github.com/Lucineer) (DiGennaro et al.)
